@@ -6,13 +6,13 @@ service TaskRepo {
     rpc AddNewEmployee(Employee) returns (ResponseEmployee);
     rpc UpdateEmployee(Employee) returns (ResponseEmployee);
     rpc FindEmployee(Employee) returns (ResponseEmployee);
-    rpc UpdateEmployeeWithFormData(Employee) returns (ResponseEmployee);
+    rpc UpdateEmployeeWithFormData(OptionalFields) returns (ResponseEmployee);
     rpc DeleteEmployee(Employee) returns (ResponseEmployee);
 
     rpc AddNewCompany(Company) returns (ResponseCompany);
     rpc UpdateCompany(Company) returns (ResponseCompany);
     rpc FindCompany(Company) returns (ResponseCompany);
-    rpc UpdateCompanyWithFormData(Company) returns (ResponseCompany);
+    rpc UpdateCompanyWithFormData(OptionalFields) returns (ResponseCompany);
     rpc DeleteCompany(Company) returns (ResponseCompany);
     rpc GetCompanyEmployeesList(Company) returns (ResponseEmployee);
 }
@@ -41,4 +41,8 @@ message ResponseEmployee {
 message ResponseCompany {
     int32 status = 1;
     repeated Company company = 2;
+}
+
+message OptionalFields {
+    string data = 1;
 }

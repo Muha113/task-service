@@ -154,13 +154,14 @@ func UpdateEmployeeWithFormDataHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var emplReq *apiproto.Employee
-	json.Unmarshal(buff, emplReq)
+	optReq := &apiproto.OptionalFields{
+		Data: string(buff[:]),
+	}
 
-	emplResp, err := c.UpdateEmployeeWithFormData(context.Background(), emplReq)
+	optResp, err := c.UpdateEmployeeWithFormData(context.Background(), optReq)
 	if err != nil {
 		logrus.Error(err)
-		w.WriteHeader(int(emplResp.Status))
+		w.WriteHeader(int(optResp.Status))
 		return
 	}
 

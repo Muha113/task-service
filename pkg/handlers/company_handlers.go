@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/Muha113/task-service/pkg/apiproto"
@@ -12,6 +13,7 @@ import (
 )
 
 func AddNewCompanyHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Connecting to task-repo...")
 	conn, err := grpc.Dial(":8081", grpc.WithInsecure())
 	if err != nil {
 		logrus.Error(err)
@@ -22,13 +24,16 @@ func AddNewCompanyHandler(w http.ResponseWriter, r *http.Request) {
 
 	c := apiproto.NewTaskRepoClient(conn)
 
-	buff := make([]byte, 4096)
+	buff := make([]byte, 10000)
+	fmt.Println("Body ---> ", r.Body)
 	_, err = r.Body.Read(buff)
 	if err != nil {
-		logrus.Error(err)
+		logrus.Error("This shit error ->", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	fmt.Println("dasdasdasdasd...")
 
 	var compReq *apiproto.Company
 	json.Unmarshal(buff, compReq)
@@ -174,13 +179,14 @@ func UpdateCompanyWithFormDataHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var compReq *apiproto.Company
-	json.Unmarshal(buff, compReq)
+	optReq := &apiproto.OptionalFields{
+		Data: string(buff[:]),
+	}
 
-	compResp, err := c.UpdateCompanyWithFormData(context.Background(), compReq)
+	optResp, err := c.UpdateCompanyWithFormData(context.Background(), optReq)
 	if err != nil {
 		logrus.Error(err)
-		w.WriteHeader(int(compResp.Status))
+		w.WriteHeader(int(optResp.Status))
 		return
 	}
 
